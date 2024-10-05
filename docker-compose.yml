@@ -1,0 +1,50 @@
+volumes:
+  motors_vendor:
+  motors_sql:
+  motors_framework_views:
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  motors:
+    build: ./
+    container_name: motors
+    volumes:
+      - ./:/var/www/html
+      - motors_vendor:/var/www/html/vendor
+      - motors_framework_views:/var/www/html/storage/framework/views
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      APP_ENV: "${APP_ENV:-local}"
+      FIX_APP_PATH_PERMISSION: 1
+
+      PHP_DISPLAY_ERRORS: 1
+      PHP_POST_MAX_SIZE: 32M
+      PHP_UPLOAD_MAX_FILESIZE: 16M
+
+      ENABLE_CRONTAB: 0
+      CRONTAB_DIR: /var/www/html/.schedules/
+
+    links:
+      - mysql
+      - redis
+    ports:
+      - 18080:80
+
+  mysql:
+    image: mysql:8.0
+    container_name: motors_mysql
+    environment:
+      MYSQL_DATABASE: motors_db
+      MYSQL_ROOT_PASSWORD: s1000rr
+      MYSQL_PASSWORD: s1000rr
+      MYSQL_USER: motors_users
+    volumes:
+      - motors_sql:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  redis:
+    image: redis:latest
