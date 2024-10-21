@@ -3,9 +3,9 @@ volumes:
   motors_sql:
   motors_framework_views:
 
-networks:
-  app-network:
-    driver: bridge
+# networks:
+#   app-network:
+#     driver: bridge
 
 services:
   motors:
